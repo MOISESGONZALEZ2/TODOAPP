@@ -1,0 +1,9 @@
+[
+  {
+    "inputFile": "../src/styles/main.scss",
+    "outputFile": "wwwroot/css/mis.css",
+    "minify": { "enabled": false },
+    "includeInProject": true,
+    "sourceMap": false
+  }
+]

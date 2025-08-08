@@ -1,0 +1,240 @@
+@using System
+@{
+    // Obtiene el nombre de la página actual: "/Login", "/Register", "/Tasks/Index", etc.
+    var currentPage = ViewContext.RouteData.Values["page"] as string ?? "";
+    // Marca como "página de introducción" sólo la de Login
+    var isIntro = currentPage.Equals("/Login", StringComparison.OrdinalIgnoreCase);
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - DoItList</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJL6tS2LmQmSpdP5CLcVYlH0eNVjIEaFf/nJGzIxFDsf"
+          crossorigin="anonymous" />
+
+    <!-- Tu CSS personalizado -->
+    <link rel="stylesheet" href="~/css/mis.css" asp-append-version="true" />
+</head>
+<body>
+    @* Sólo muestro navbar + sidebar si NO estoy en /Login *@
+    @if (!isIntro)
+    {
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <button class="btn btn-outline-secondary me-2"
+                        type="button"
+                        data-bs-toggle="offcanvas"
+                        data-bs-target="#sidebar"
+                        aria-controls="sidebar">
+                    ☰
+                </button>
+
+                <a class="navbar-brand" asp-page="/">DoItList</a>
+
+                <button class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#navbarNav"
+                        aria-controls="navbarNav"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        @if (User.Identity!.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <span class="navbar-text">Hola, @User.Identity.Name!</span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-page="/Logout">Logout</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-page="/Login">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-page="/Register">Register</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Sidebar Offcanvas -->
+        <div class="offcanvas offcanvas-start"
+             tabindex="-1"
+             id="sidebar"
+             aria-labelledby="sidebarLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="sidebarLabel">Menú</h5>
+                <button type="button"
+                        class="btn-close text-reset"
+                        data-bs-dismiss="offcanvas"
+                        aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="list-unstyled">
+                    <li><a asp-page="/Tasks/Index" class="text-decoration-none">Tus tareas</a></li>
+                    <li><a asp-page="/Profile" class="text-decoration-none">Perfil</a></li>
+                    <li><a asp-page="/Settings" class="text-decoration-none">Ajustes</a></li>
+                </ul>
+            </div>
+        </div>
+    }
+
+    <!-- Aquí va siempre la página activa (Login, Tasks, etc.) -->
+    <div class="container mt-4">
+        @RenderBody()
+    </div>
+
+    <!-- Toasts -->
+    <div id="toastContainer" class="position-fixed bottom-0 end-0 p-3" style="z-index:1100"></div>
+
+    @RenderSection("Scripts", required: false)
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFY5tK2IhGU6O0MdC70fQF9IxNfgUFTdGiMc/jXn/tWtIaxVXMfQbmB"
+            crossorigin="anonymous"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@* <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - DoItList</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJL6tS2LmQmSpdP5CLcVYlH0eNVjIEaFf/nJGzIxFDsf"
+          crossorigin="anonymous" />
+
+    <!-- Tu CSS personalizado (cache-busting automático) -->
+    <link rel="stylesheet" href="~/css/mis.css" asp-append-version="true" />
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <button class="btn btn-outline-secondary me-2"
+                    type="button"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#sidebar"
+                    aria-controls="sidebar">
+                ☰
+            </button>
+
+            <a class="navbar-brand" asp-page="/">DoItList</a>
+
+            <button class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav"
+                    aria-controls="navbarNav"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    @if (User.Identity!.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <span class="navbar-text">Hola, @User.Identity.Name!</span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-page="/Logout">Logout</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-page="/Login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-page="/Register">Register</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar Offcanvas -->
+    <div class="offcanvas offcanvas-start"
+         tabindex="-1"
+         id="sidebar"
+         aria-labelledby="sidebarLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="sidebarLabel">Menú</h5>
+            <button type="button"
+                    class="btn-close text-reset"
+                    data-bs-dismiss="offcanvas"
+                    aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="list-unstyled">
+                <li><a asp-page="/Profile" class="text-decoration-none">Perfil</a></li>
+                <li><a asp-page="/Settings" class="text-decoration-none">Ajustes</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Aquí renderizamos la página activa -->
+    @RenderBody()
+
+    <!-- Toasts -->
+    <div id="toastContainer"
+         class="position-fixed bottom-0 end-0 p-3"
+         style="z-index: 1100;"></div>
+
+    <!-- Validation Scripts (por si tu página las usa) -->
+    @RenderSection("Scripts", required: false)
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFY5tK2IhGU6O0MdC70fQF9IxNfgUFTdGiMc/jXn/tWtIaxVXMfQbmB"
+            crossorigin="anonymous"></script>
+</body>
+</html>
+ *@

@@ -1,0 +1,17 @@
+@page
+@model DoItList.Pages.Tasks.LogoutModel
+@{
+    ViewData["Title"] = "Logout";
+}
+
+<div class="container text-center mt-5">
+    <p>Cerrando sesión…</p>
+</div>
+
+@section Scripts {
+    <script>
+        // Limpiar token de autenticación y redirigir a Login
+        localStorage.removeItem("token");
+        window.location.href = "/Login";
+    </script>
+}

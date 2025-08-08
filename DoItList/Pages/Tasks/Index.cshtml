@@ -1,0 +1,149 @@
+@page
+@model DoItList.Pages.Tasks.IndexModel
+@{
+    ViewData["Title"] = "Mis Tareas";
+    // Asegúrate de que tu Layout ya incluya:
+    // <link rel="stylesheet" href="~/css/mis.css" asp-append-version="true" />
+}
+
+<div class="container">
+    <h1>Mis Tareas</h1>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <ul class="nav nav-tabs" id="taskTabs">
+            <li class="nav-item">
+                <a class="nav-link active" href="#" data-status="pending">Pendientes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-status="completed">Completadas</a>
+            </li>
+        </ul>
+
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#taskModal">
+            + Nueva tarea
+        </button>
+    </div>
+
+    <div id="task-container" class="list-group">
+        <!-- Las tareas se cargarán aquí dinámicamente -->
+    </div>
+</div>
+
+<!-- Modal para crear/editar tareas -->
+<div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="taskForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="taskModalLabel">Nueva Tarea</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="taskId">
+
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Título</label>
+                        <input type="text" class="form-control" id="title" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="description" rows="3"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="dueDate" class="form-label">Fecha de Vencimiento</label>
+                        <input type="date" class="form-control" id="dueDate">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="priority" class="form-label">Prioridad</label>
+                        <select class="form-select" id="priority">
+                            <option value="Low">Baja</option>
+                            <option value="Medium" selected>Media</option>
+                            <option value="High">Alta</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@{
+    ViewData["Title"] = "Tus Tareas";
+}
+
+<div class="page-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Tus Tareas</h1>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#taskModal">Añadir tarea</button>
+    </div>
+
+    <ul id="task-list" class="list-group mb-3">
+        @foreach (var task in Model.Tasks)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center @(task.IsCompleted ? "completed" : "")">
+                <div>
+                    <strong>@task.Title</strong><br />
+                    @if (!String.IsNullOrEmpty(task.Description)) {<text><small>@task.Description</small><br /></text>}
+                    @if (task.DueDate.HasValue) {<text><small>Vence: @task.DueDate.Value.ToShortDateString()</small></text>}
+                </div>
+                <form method="post" asp-page-handler="Delete">
+                    <input type="hidden" name="id" value="@task.Id" />
+                    <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                </form>
+            </li>
+        }
+    </ul>
+</div>
+
+<!-- Modal para añadir tarea -->
+<div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-page-handler="Create">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="taskModalLabel">Nueva Tarea</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" asp-for="InputTask.Id" />
+                    <div class="mb-3">
+                        <label asp-for="InputTask.Title" class="form-label">Título</label>
+                        <input asp-for="InputTask.Title" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="InputTask.Description" class="form-label">Descripción</label>
+                        <textarea asp-for="InputTask.Description" class="form-control" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="InputTask.DueDate" class="form-label">Fecha de Vencimiento</label>
+                        <input asp-for="InputTask.DueDate" type="date" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="InputTask.Priority" class="form-label">Prioridad</label>
+                        <select asp-for="InputTask.Priority" class="form-select">
+                            <option value="Low">Baja</option>
+                            <option value="Medium">Media</option>
+                            <option value="High">Alta</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/tasks.js"></script>
+}
